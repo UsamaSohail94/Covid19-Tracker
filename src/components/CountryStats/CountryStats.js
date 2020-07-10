@@ -1,8 +1,8 @@
 import React,{useState, useEffect} from 'react'
-import {Grid, Typography, NativeSelect, FormControl} from '@material-ui/core'
+import {Grid, Typography, NativeSelect, FormControl, FormLabel} from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles';
 
-import {Bar} from 'react-chartjs-2'
+import {Bar, Doughnut, Pie} from 'react-chartjs-2'
 
 import CountryCards from './CountryCards'
 
@@ -38,6 +38,7 @@ const CountryStats = () => {
     const [country, setCountry] = useState('Pakistan')
     const [countryData, setCountryData] = useState({})
     const [countriesNames, setCountriesNames] = useState([])
+    const [chart, setChart] = useState("Bar")
     const URL = "https://covid19.mathdro.id/api/countries"
 
     useEffect(()=>{
@@ -60,6 +61,68 @@ const CountryStats = () => {
         countryApi()
     },[country])
     
+    const BarChart = (
+        countryData.confirmed ?(
+            <Bar
+            data={{
+            labels: ['Infected', 'Recovered', 'Deaths'],
+            datasets: [
+                {
+                label: 'People',
+                backgroundColor: ['rgba(0, 0, 255, 0.5)', 'rgba(0, 255, 0, 0.5)', 'rgba(255, 0, 0, 0.5)'],
+                data: [countryData.confirmed.value, countryData.recovered.value, countryData.deaths.value],
+                },
+            ],
+            }}
+            options={{
+            legend: { display: false },
+            title: { display: true, text: `Current state in ${country}` },
+            }}
+        />
+        ): "Loading"
+    )
+
+    const PieChart = (
+        countryData.confirmed ?(
+            <Pie
+            data={{
+            labels: ['Infected', 'Recovered', 'Deaths'],
+            datasets: [
+                {
+                label: 'People',
+                backgroundColor: ['rgba(0, 0, 255, 0.5)', 'rgba(0, 255, 0, 0.5)', 'rgba(255, 0, 0, 0.5)'],
+                data: [countryData.confirmed.value, countryData.recovered.value, countryData.deaths.value],
+                },
+            ],
+            }}
+            options={{
+            legend: { display: false },
+            title: { display: true, text: `Current state in ${country}` },
+            }}
+        />
+        ): "Loading"
+    )
+
+    const DoughnutChart = (
+        countryData.confirmed ?(
+            <Doughnut
+            data={{
+            labels: ['Infected', 'Recovered', 'Deaths'],
+            datasets: [
+                {
+                label: 'People',
+                backgroundColor: ['rgba(0, 0, 255, 0.5)', 'rgba(0, 255, 0, 0.5)', 'rgba(255, 0, 0, 0.5)'],
+                data: [countryData.confirmed.value, countryData.recovered.value, countryData.deaths.value],
+                },
+            ],
+            }}
+            options={{
+            legend: { display: false },
+            title: { display: true, text: `Current state in ${country}` },
+            }}
+        />
+        ): "Loading"
+    )
     
     
   return (
@@ -80,9 +143,12 @@ const CountryStats = () => {
             Country Specific Stats
         </Typography>
     </Grid>
-    <Grid item xs={12} align='center' >
+    <Grid item container xs={12} align='center' >
+        
+        <Grid item xs ={6}>
         <FormControl className={classes.form}>
-            <NativeSelect 
+        <FormLabel component="legend">Select Country</FormLabel>
+        <NativeSelect 
             defaultValue="" 
             onChange={(e) => {setCountry(e.target.value)}}
             >
@@ -92,7 +158,27 @@ const CountryStats = () => {
                     {countryName}
                     </option>)}
             </NativeSelect>
+        
         </FormControl>
+        
+        </Grid>
+
+        <Grid item xs ={6}><FormControl className={classes.form}>
+        <FormLabel component="legend" >Select Chart</FormLabel>
+        <NativeSelect 
+                    defaultValue=""
+                    onChange={(e) => {setChart(e.target.value)}}
+                   
+                >
+                    <option value="select">Select</option>
+                    <option value="Bar">Bar</option>
+                    <option value="Doughnut">Doughnut</option>
+                    <option value="Pie">Pie</option>
+                </NativeSelect>
+            
+        </FormControl></Grid>
+    
+        
     </Grid>
     <Grid 
         item 
@@ -105,7 +191,7 @@ const CountryStats = () => {
         alignItems='center'
     >
         <Grid item xs={12} >
-            <Typography variant='h6' align= "center" gutterBottom>{country? `Country Name: ${country}` : "Enter Country"}</Typography>
+            <Typography variant='h6' align= "center" gutterBottom color="Secondary">{country? `Country Name: ${country}` : "Enter Country"}</Typography>
         </Grid>   
         <Grid item xs={12} align='center' >
             <CountryCards 
@@ -139,28 +225,10 @@ const CountryStats = () => {
             align='center'
             >
             <Grid item xs={12}>
-            <Typography variant='h6' >Country Chart </Typography>
+            <Typography variant='h6' color="Secondary">Country Chart </Typography>
             </Grid>
             <Grid item xs={12}>
-            {countryData.confirmed ?(
-                <Bar
-                data={{
-                labels: ['Infected', 'Recovered', 'Deaths'],
-                datasets: [
-                    {
-                    label: 'People',
-                    backgroundColor: ['rgba(0, 0, 255, 0.5)', 'rgba(0, 255, 0, 0.5)', 'rgba(255, 0, 0, 0.5)'],
-                    data: [countryData.confirmed.value, countryData.recovered.value, countryData.deaths.value],
-                    },
-                ],
-                }}
-                options={{
-                legend: { display: false },
-                title: { display: true, text: `Current state in ${country}` },
-                }}
-            />
-            ): "Loading"}
-                
+            {(chart==="Bar")? BarChart : (chart==="Doughnut")? DoughnutChart:(chart==="Pie")? PieChart:null}   
             </Grid>    
         </Grid>
             
