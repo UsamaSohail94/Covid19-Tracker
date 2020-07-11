@@ -1,5 +1,5 @@
 import React,{useState, useEffect} from 'react'
-import {Grid, Typography, NativeSelect, FormControl, FormLabel} from '@material-ui/core'
+import {Grid, Typography, NativeSelect, FormControl} from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles';
 
 import {Bar, Doughnut, Pie} from 'react-chartjs-2'
@@ -50,7 +50,7 @@ const CountryStats = () => {
             const updatedCountries = countries.map(country=> country.name)
 
             //fetch country data
-            const fetchCountryData = await fetch(`https://covid19.mathdro.id/api/countries/${country}`)
+            const fetchCountryData = await fetch(`${URL}/${country}`)
             const countryDataJson = await fetchCountryData.json()
              
             console.log("country1:", countryDataJson)
@@ -147,12 +147,11 @@ const CountryStats = () => {
         
         <Grid item xs ={6}>
         <FormControl className={classes.form}>
-        <FormLabel component="legend">Select Country</FormLabel>
         <NativeSelect 
             defaultValue="" 
             onChange={(e) => {setCountry(e.target.value)}}
             >
-                <option value="select">Select</option>
+                <option value="select">Select Country</option>
                 {countriesNames.map((countryName, i)=> 
                     <option key={i} value={countryName}>
                     {countryName}
@@ -164,13 +163,12 @@ const CountryStats = () => {
         </Grid>
 
         <Grid item xs ={6}><FormControl className={classes.form}>
-        <FormLabel component="legend" >Select Chart</FormLabel>
         <NativeSelect 
                     defaultValue=""
                     onChange={(e) => {setChart(e.target.value)}}
                    
                 >
-                    <option value="select">Select</option>
+                    <option value="select">Select Chart</option>
                     <option value="Bar">Bar</option>
                     <option value="Doughnut">Doughnut</option>
                     <option value="Pie">Pie</option>
